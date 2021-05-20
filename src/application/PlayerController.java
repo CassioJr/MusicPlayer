@@ -34,6 +34,7 @@ public class PlayerController {
 	@FXML
 	private Button button;
 	private static String caminhomusica;
+	private Duration resumePlayer;
 	private boolean running = false;
 	private MediaPlayer mp;
 	private Media midia;
@@ -56,6 +57,8 @@ public class PlayerController {
 			}
 		});
 	}
+
+
 
 	public void durationTotal() {
 		mp.setOnReady(new Runnable() {
@@ -121,6 +124,26 @@ public class PlayerController {
 		}, 0, 1000);
 	}
 
+	public void resume() {
+		timer = new Timer();
+		timer.scheduleAtFixedRate(new TimerTask() {
+			@Override
+			public void run() {
+				Platform.runLater(() -> {					
+					if(resumePlayer != null && running == true) {
+						mp.setStartTime(resumePlayer);	
+						}else {
+							resumePlayer = mp.getCurrentTime();	
+						}
+				});
+				
+			}
+		}, 0, 1000);
+		
+		
+	}
+	
+
 	public void play() {
 		try {
 			if (running == false) {
@@ -129,17 +152,19 @@ public class PlayerController {
 				mp.play();
 				button.setText("Pause");
 				running = true;
+				resume();
 			    currentTime();
 			} else {
+				resume();
 				mp.pause();
 				button.setText("Play");
 				running = false;
 			}
-		} catch (NullPointerException e) {
+		} 
+		catch (NullPointerException e) {
 			alertMessage("Escolha uma musica");
 		}
 	}
-
 
 	public void MusicFile() {
 		try {
@@ -154,6 +179,7 @@ public class PlayerController {
 				AlbumCover();
 				durationTotal();
 				Progresso();
+				resumePlayer = null;
 			}
 			
 		}catch(NullPointerException e) {
