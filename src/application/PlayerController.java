@@ -62,6 +62,45 @@ public class PlayerController {
 			}
 		});
 	}
+	public void play() {
+		try {
+			if (running == false) {
+				midia = new Media(Paths.get(caminhomusica).toUri().toString());
+				mp = new MediaPlayer(midia);
+				mp.play();
+				button.setText("Pause");
+				running = true;
+				resume();
+				reloop();
+				currentTime();
+			} else {
+				resume();
+				mp.pause();
+				button.setText("Play");
+				running = false;
+			}
+		} catch (NullPointerException e) {
+			alertMessage("Escolha uma musica");
+		}
+	}
+	
+	public void reloop() {
+		  timer = new Timer(); 
+		  timer.scheduleAtFixedRate(new TimerTask() {
+			  @Override 
+		  public void run() { 
+		  Platform.runLater(() -> { 
+			  try {
+			  if(mp.getCurrentTime().toSeconds() == midia.getDuration().toSeconds()) {
+					resumePlayer = null;
+					mp.setStartTime(resumePlayer);
+					play();
+				}
+			  }catch(Exception e ) {}
+		  });
+		 
+		  } }, 0, 1000);			
+	}
 
 	public void durationTotal() {
 		mp.setOnReady(new Runnable() {
@@ -90,13 +129,13 @@ public class PlayerController {
 		alert.showAndWait();
 	}
 	public void SliderTime() {
-		new Thread(() -> 
-		mp.seek(Duration.seconds(barraProgresso.getValue()))).start();
-}
+	new Thread(() -> 
+	mp.seek(Duration.seconds(barraProgresso.getValue()))).start();
+		}
+	
 	
 	
 	public void Progresso() {
-		
 		  timer = new Timer(); 
 		  timer.scheduleAtFixedRate(new TimerTask() {
 		  @Override 
@@ -108,8 +147,7 @@ public class PlayerController {
 		  barraProgresso.setValue(currentSeconds);
 		  });
 		 
-		  } }, 0, 1000);
-		 
+		  } }, 0, 1000);			
 	}
 
 	public void currentTime() {
@@ -146,27 +184,6 @@ public class PlayerController {
 		}, 0, 1000);
 	}
 
-	public void play() {
-		try {
-			if (running == false) {
-				midia = new Media(Paths.get(caminhomusica).toUri().toString());
-				mp = new MediaPlayer(midia);
-				mp.play();
-				button.setText("Pause");
-				running = true;
-				resume();
-				currentTime();
-			} else {
-				resume();
-				mp.pause();
-				button.setText("Play");
-				running = false;
-			}
-		} catch (NullPointerException e) {
-			alertMessage("Escolha uma musica");
-		}
-	}
-
 	public void MusicFile() {
 		try {
 			FileChooser fc = new FileChooser();
@@ -180,6 +197,7 @@ public class PlayerController {
 				AlbumCover();
 				durationTotal();
 				Progresso();
+				barraProgresso.setVisible(true);
 				resumePlayer = null;
 			}
 
