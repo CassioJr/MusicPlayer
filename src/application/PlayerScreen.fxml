@@ -10,7 +10,7 @@
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="324.0" prefWidth="601.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.PlayerController">
    <children>
       <ImageView fx:id="albumImage" fitHeight="164.0" fitWidth="183.0" layoutX="197.0" layoutY="51.0" pickOnBounds="true" preserveRatio="true" />
-      <Button fx:id="button" layoutX="245.0" layoutY="283.0" mnemonicParsing="false" onAction="#play" prefHeight="26.0" prefWidth="86.0" text="Play" />
+      <Button fx:id="button" layoutX="245.0" layoutY="275.0" mnemonicParsing="false" onAction="#play" prefHeight="34.0" prefWidth="102.0" text="Play" />
       <Button layoutX="533.0" layoutY="237.0" mnemonicParsing="false" onAction="#Caminho" text="Musica" />
       <Label layoutX="23.0" layoutY="29.0" text="Titulo">
          <font>
@@ -20,6 +20,6 @@
       <Label fx:id="duration" layoutX="14.0" layoutY="232.0" text="Duração" />
       <Label fx:id="duration" layoutX="103.0" layoutY="231.0" prefHeight="18.0" prefWidth="54.0" />
       <Label fx:id="current" layoutX="62.0" layoutY="232.0" prefHeight="18.0" prefWidth="34.0" />
-      <Slider fx:id="barraProgresso" layoutX="7.0" layoutY="215.0" prefHeight="14.0" prefWidth="586.0" />
+      <Slider fx:id="barraProgresso" layoutX="7.0" layoutY="215.0" onDragDetected="#SliderTime" prefHeight="14.0" prefWidth="586.0" />
    </children>
 </AnchorPane>

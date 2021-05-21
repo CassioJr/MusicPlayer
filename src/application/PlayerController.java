@@ -5,12 +5,17 @@ import java.nio.file.Paths;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import com.sun.glass.ui.Accessible.EventHandler;
+import com.sun.jdi.event.Event;
+import com.sun.media.jfxmedia.events.NewFrameEvent;
+
 import javafx.application.Platform;
 import javafx.collections.MapChangeListener;
 import javafx.collections.ObservableMap;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.control.Slider;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -20,6 +25,7 @@ import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.stage.FileChooser;
 import javafx.util.Duration;
+
 public class PlayerController {
 	@FXML
 	private Label musicname;
@@ -39,7 +45,6 @@ public class PlayerController {
 	private MediaPlayer mp;
 	private Media midia;
 	private Timer timer;
-	private TimerTask task;
 
 	public void AlbumCover() {
 		File f = new File("imagens//nocoverart.jpg");
@@ -58,8 +63,6 @@ public class PlayerController {
 		});
 	}
 
-
-
 	public void durationTotal() {
 		mp.setOnReady(new Runnable() {
 			@Override
@@ -75,7 +78,7 @@ public class PlayerController {
 				int secondscurrent = Time % 60000 / 1000;
 				String CurrentTime = String.format("%02d:%02d", minutescurrent, secondscurrent);
 				current.setText(CurrentTime);
-				}
+			}
 		});
 	}
 
@@ -86,27 +89,29 @@ public class PlayerController {
 		alert.setHeaderText(null);
 		alert.showAndWait();
 	}
-
+	public void SliderTime() {
+		new Thread(() -> 
+		mp.seek(Duration.seconds(barraProgresso.getValue()))).start();
+}
+	
+	
 	public void Progresso() {
-	/*	timer = new Timer();
-		timer.scheduleAtFixedRate(new TimerTask() {
-			@Override
-			public void run() {
-				Platform.runLater(() -> {
-				running = true;
-				double current = mp.getCurrentTime().toSeconds();
-				double end = midia.getDuration().toSeconds();
-				barraProgresso.setMax(end);
-				barraProgresso.setMin(0);
-				barraProgresso.setValue(current/end);
-			});
-
-			}
-		}, 0, 1000);
-*/
+		
+		  timer = new Timer(); 
+		  timer.scheduleAtFixedRate(new TimerTask() {
+		  @Override 
+		  public void run() { 
+		  Platform.runLater(() -> { 
+		  double currentSeconds = mp.getCurrentTime().toSeconds(); 
+		  double end = midia.getDuration().toSeconds(); 
+		  barraProgresso.setMax(end);
+		  barraProgresso.setValue(currentSeconds);
+		  });
+		 
+		  } }, 0, 1000);
+		 
 	}
-	
-	
+
 	public void currentTime() {
 		timer = new Timer();
 		timer.scheduleAtFixedRate(new TimerTask() {
@@ -129,20 +134,17 @@ public class PlayerController {
 		timer.scheduleAtFixedRate(new TimerTask() {
 			@Override
 			public void run() {
-				Platform.runLater(() -> {					
-					if(resumePlayer != null && running == true) {
-						mp.setStartTime(resumePlayer);	
-						}else {
-							resumePlayer = mp.getCurrentTime();	
-						}
+				Platform.runLater(() -> {
+					if (resumePlayer != null && running == true) {
+						mp.setStartTime(resumePlayer);
+					} else {
+						resumePlayer = mp.getCurrentTime();
+					}
 				});
-				
+
 			}
 		}, 0, 1000);
-		
-		
 	}
-	
 
 	public void play() {
 		try {
@@ -153,15 +155,14 @@ public class PlayerController {
 				button.setText("Pause");
 				running = true;
 				resume();
-			    currentTime();
+				currentTime();
 			} else {
 				resume();
 				mp.pause();
 				button.setText("Play");
 				running = false;
 			}
-		} 
-		catch (NullPointerException e) {
+		} catch (NullPointerException e) {
 			alertMessage("Escolha uma musica");
 		}
 	}
@@ -181,9 +182,9 @@ public class PlayerController {
 				Progresso();
 				resumePlayer = null;
 			}
-			
-		}catch(NullPointerException e) {
-			
+
+		} catch (NullPointerException e) {
+
 		} catch (Exception e) {
 			System.out.println("Arquivo inexistente");
 		}
